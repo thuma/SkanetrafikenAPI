@@ -14,7 +14,7 @@ if(is_file($namelist) == FALSE)
 			{
 			$newdata = FALSE;
 			$doc = new DOMDocument();
-			@$doc->loadHTML(file_get_contents('http://193.45.213.123/halland/v2/indexes.aspx?optType=0&selKommun=0&sLetter='.urlencode(utf8_decode($bokstaver[$i])).'&iPage='.$page.'&Language=se&optFrTo=0&TNSource=HALLAND'));
+			@$doc->loadHTML(file_get_contents('http://www.reseplaneraren.skanetrafiken.se/indexes.aspx?optType=0&selKommun=0&sLetter='.urlencode(utf8_decode($bokstaver[$i])).'&iPage='.$page.'&Language=se&optFrTo=0&TNSource='));
 			$list = $doc->getElementById('add-fetch')->getElementsByTagName('a');
 			if($list->length == 0)
 			{
