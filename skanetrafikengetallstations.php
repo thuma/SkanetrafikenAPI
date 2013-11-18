@@ -37,93 +37,30 @@ if(is_file($namelist) == FALSE)
 // Load all stations into object.
 $all = json_decode(file_get_contents($namelist));
 
-$idlist = 'ids.json';
+$idlist = 'coord.json';
 if(is_file($idlist) == FALSE)
 	{
 	foreach($all as $key => $name)
 		{
-		$url = 'http://www.skanetrafiken.se/TravelPlannerAjax/Proxy.aspx?lang=se&letters='.rawurlencode(utf8_decode($name->cleanname));
+		$url = 'http://www.labs.skanetrafiken.se/v2.2/querystation.asp?inpPointfr='.rawurlencode(utf8_decode($name->cleanname));
 		$data = utf8_encode(file_get_contents($url));
-		$stationer = preg_split('/></',$data);
-		foreach($stationer as $soksvar)
-			{
-			$station = preg_split('/###/', $soksvar);
-			$stationinfo = preg_split('/\|/', $station[0]);
-			if(trim(preg_replace('/[ |\t]+/', ' ',$stationinfo[0])) == $name->cleanname)
-				{
-				$all[$key]->id = $stationinfo[1];
-				$all[$key]->type = $stationinfo[2];
-				print $all[$key]->name.' = '.$all[$key]->id."\n";
-				break;
-				}
-			}
-		}
-	file_put_contents($idlist,json_encode($all));
-	}
-
-
-die();
-$all = json_decode(file_get_contents($idlist));
-
-$idlist = 'coord.json';
-foreach($all as $key => $station)
-	{
-	if(isset($station->position)==FALSE)
-		{
-		//open connection
-		$ch = curl_init('http://193.45.213.123/halland/v2/querypage_adv.aspx');
-			
-		$fields_string ='inpPointFr_ajax='.
-				'&inpPointTo_ajax='.
-				'&inpPointInterm_ajax='.
-				'&selRegionFr=741'.
-				'&inpPointFr='.
-				'&optTypeFr=0'.
-				'&inpPointTo='.
-				'&optTypeTo=0'.
-				'&inpPointInterm='.
-				'&selDirection=0'.
-				'&inpTime=06%3A12'.
-				'&inpDate=2013-11-25'.
-				'&optReturn=0'.
-				'&selDirection2=0'.
-				'&inpTime2=10%3A12'.
-				'&inpDate2=2013-11-25'.
-				'&trafficmask=1'.
-				'&trafficmask=2'.
-				'&trafficmask=4'.
-				'&trafficmask=8'.
-				'&trafficmask=16'.
-				'&selChangeTime=0'.
-				'&selWalkSpeed=0'.
-				'&selPriority=0'.
-				'&selComboJourney=0'.
-				'&cmdAction=pastefrommap'.
-				'&EU_Spirit=False'.
-				'&TNSource='.
-				'&SupportsScript=True'.
-				'&Language=se'.
-				'&VerNo=7.1.1.3.0.2'.
-				'&Source=querypage_adv'.
-				'&MapParams=0%7C0%7Cnull%7C'.rawurlencode(utf8_decode($station->name));
-
-		curl_setopt($ch,CURLOPT_POST, TRUE);
-		curl_setopt($ch,CURLOPT_RETURNTRANSFER, TRUE);
-		curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
-		$result = curl_exec($ch);
-		curl_close($ch);
-		$htmldelar = preg_split('/var aCoordsFr/',$result);
-		$htmldelar = preg_split("/'/",$htmldelar[1]);
-		$xymix = preg_split("/&|=/",$htmldelar[1]);
-		$rt90 = new stdClass();
-		$rt90->x = $xymix[4];
-		$rt90->y = $xymix[6];
+		$datas = preg_split('/\<Point\>/',$data);
+		$xstring = preg_split('/\<\/X\>/',$datas[1]);
+		$ystring = preg_split('/\<\/Y\>/',$datas[1]);
+		$id = preg_split('/\<\/Id\>/',$datas[1]);
+		$id = preg_split('/\<Id\>/',$id[0]);
+		$type = preg_split('/\<\/Type\>/',$datas[1]);
+		$type = preg_split('/\<Type\>/',$type[0]);
+		$rt90->x = substr($xstring[0],-7);
+		$rt90->y = substr($ystring[0],-7);
 		$coord = new stdClass();
 		$coord->rt90 = $rt90;
 		$all[$key]->position = $coord;
+		$all[$key]->id = $id[1];
+		$all[$key]->type = $type[1];
+		print_r($all[$key]);
 		file_put_contents($idlist,json_encode($all));
 		}
 	}
-
 $all = json_decode(file_get_contents($idlist));
 ?>
