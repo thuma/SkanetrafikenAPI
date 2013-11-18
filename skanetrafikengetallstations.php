@@ -42,23 +42,20 @@ if(is_file($idlist) == FALSE)
 	{
 	foreach($all as $key => $name)
 		{
-		$url = 'http://www.labs.skanetrafiken.se/v2.2/querystation.asp?inpPointfr='.rawurlencode(utf8_decode($name->cleanname));
-		$data = utf8_encode(file_get_contents($url));
-		$datas = preg_split('/\<Point\>/',$data);
-		$xstring = preg_split('/\<\/X\>/',$datas[1]);
-		$ystring = preg_split('/\<\/Y\>/',$datas[1]);
-		$id = preg_split('/\<\/Id\>/',$datas[1]);
-		$id = preg_split('/\<Id\>/',$id[0]);
-		$type = preg_split('/\<\/Type\>/',$datas[1]);
-		$type = preg_split('/\<Type\>/',$type[0]);
+		$url = 'http://www.labs.skanetrafiken.se/v2.2/querystation.asp?inpPointfr='.rawurlencode(utf8_decode($name->cleanname));		
+		$data = file_get_contents($url);
+		$datas = preg_split('/\<Message \/\>/',$data);
+		$datas = preg_split('/\<\/GetStartEndPointResult\>/',$datas[1]);
+		print $datas[0];
+		$data = simplexml_load_string('<?xml version="1.0" encoding="UTF-8"?>'."<alla>".trim($datas[0]).'</alla>');
 		$rt90 = new stdClass();
-		$rt90->x = substr($xstring[0],-7);
-		$rt90->y = substr($ystring[0],-7);
+		$rt90->x = 
+		$rt90->y = 
 		$coord = new stdClass();
 		$coord->rt90 = $rt90;
 		$all[$key]->position = $coord;
-		$all[$key]->id = $id[1];
-		$all[$key]->type = $type[1];
+		$all[$key]->id = 
+		$all[$key]->type = 
 		print_r($all[$key]);
 		file_put_contents($idlist,json_encode($all));
 		}
