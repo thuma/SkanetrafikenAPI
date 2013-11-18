@@ -42,7 +42,7 @@ if(is_file($idlist) == FALSE)
 	{
 	foreach($all as $key => $name)
 		{
-		$url = 'http://193.45.213.123/halland/v2/rpajax.aspx?net=HALLAND&lang=se&letters='.rawurlencode(utf8_decode($name->cleanname));
+		$url = 'http://www.skanetrafiken.se/TravelPlannerAjax/Proxy.aspx?lang=se&letters='.rawurlencode(utf8_decode($name->cleanname));
 		$data = utf8_encode(file_get_contents($url));
 		$stationer = preg_split('/></',$data);
 		foreach($stationer as $soksvar)
@@ -61,6 +61,8 @@ if(is_file($idlist) == FALSE)
 	file_put_contents($idlist,json_encode($all));
 	}
 
+
+die();
 $all = json_decode(file_get_contents($idlist));
 
 $idlist = 'coord.json';
