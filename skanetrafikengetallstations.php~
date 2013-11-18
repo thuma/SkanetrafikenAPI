@@ -51,7 +51,6 @@ if(is_file($idlist) == FALSE)
 		$id = preg_split('/\<Id\>/',$id[0]);
 		$type = preg_split('/\<\/Type\>/',$datas[1]);
 		$type = preg_split('/\<Type\>/',$type[0]);
-		$rt90 = new stdClass();
 		$rt90->x = substr($xstring[0],-7);
 		$rt90->y = substr($ystring[0],-7);
 		$coord = new stdClass();
