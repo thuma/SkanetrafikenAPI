@@ -73,31 +73,39 @@ foreach($all as $key => $station)
 		//open connection
 		$ch = curl_init('http://193.45.213.123/halland/v2/querypage_adv.aspx');
 			
-		$fields_string = 'inpPointFr_ajax='			
-		.'&inpPointTo_ajax='
-		.'&inpPointInterm_ajax='
-		.'&selRegionFr=741'
-		.'&selPointFr='.rawurlencode(utf8_decode($station->cleanname)).'%7C'.$station->id.'%7C0'
-		.'&inpPointFr='.rawurlencode(utf8_decode($station->cleanname))
-		.'&optTypeFr=0'
-		.'&inpPointTo=&optTypeTo=0'
-		.'&selDirection=0'
-		.'&inpTime=08%3A51&inpDate=2013-09-22'
-		.'&optReturn=0&selDirection2=0'
-		.'&inpTime2=12%3A53&inpDate2=2013-09-22'
-		.'&trafficmask=1'
-		.'&trafficmask=2&trafficmask=4'
-		.'&selChangeTime=0'
-		.'&selWalkSpeed=0'
-		.'&selPriority=0'
-		.'&cmdAction=pastefrommap'
-		.'&EU_Spirit=False'
-		.'&TNSource=HALLAND'
-		.'&SupportsScript=True'
-		.'&Language=se'
-		.'&VerNo=7.1.1.2.0.5'
-		.'&Source=querypage_adv'
-		.'&MapParams=';
+		$fields_string ='inpPointFr_ajax='.
+				'&inpPointTo_ajax='.
+				'&inpPointInterm_ajax='.
+				'&selRegionFr=741'.
+				'&inpPointFr='.
+				'&optTypeFr=0'.
+				'&inpPointTo='.
+				'&optTypeTo=0'.
+				'&inpPointInterm='.
+				'&selDirection=0'.
+				'&inpTime=06%3A12'.
+				'&inpDate=2013-11-25'.
+				'&optReturn=0'.
+				'&selDirection2=0'.
+				'&inpTime2=10%3A12'.
+				'&inpDate2=2013-11-25'.
+				'&trafficmask=1'.
+				'&trafficmask=2'.
+				'&trafficmask=4'.
+				'&trafficmask=8'.
+				'&trafficmask=16'.
+				'&selChangeTime=0'.
+				'&selWalkSpeed=0'.
+				'&selPriority=0'.
+				'&selComboJourney=0'.
+				'&cmdAction=pastefrommap'.
+				'&EU_Spirit=False'.
+				'&TNSource='.
+				'&SupportsScript=True'.
+				'&Language=se'.
+				'&VerNo=7.1.1.3.0.2'.
+				'&Source=querypage_adv'.
+				'&MapParams=0%7C0%7Cnull%7C'.rawurlencode(utf8_decode($station->name));
 
 		curl_setopt($ch,CURLOPT_POST, TRUE);
 		curl_setopt($ch,CURLOPT_RETURNTRANSFER, TRUE);
