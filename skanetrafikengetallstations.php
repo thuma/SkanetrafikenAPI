@@ -36,7 +36,7 @@ if(is_file($namelist) == FALSE)
 
 // Load all stations into object.
 $all = json_decode(file_get_contents($namelist));
-
+$newlist = array();
 $idlist = 'coord.json';
 if(is_file($idlist) == FALSE)
 	{
@@ -46,19 +46,32 @@ if(is_file($idlist) == FALSE)
 		$data = file_get_contents($url);
 		$datas = preg_split('/\<Message \/\>/',$data);
 		$datas = preg_split('/\<\/GetStartEndPointResult\>/',$datas[1]);
-		print $datas[0];
 		$data = simplexml_load_string('<?xml version="1.0" encoding="UTF-8"?>'."<alla>".trim($datas[0]).'</alla>');
-		$rt90 = new stdClass();
-		$rt90->x = 
-		$rt90->y = 
-		$coord = new stdClass();
-		$coord->rt90 = $rt90;
-		$all[$key]->position = $coord;
-		$all[$key]->id = 
-		$all[$key]->type = 
-		print_r($all[$key]);
-		file_put_contents($idlist,json_encode($all));
+		$data = json_decode(json_encode($data));
+		$lista = $data->StartPoints->Point;
+		if(is_array($lista)==FALSE){
+			$temp = $lista; 
+			$lista = array();			
+			$lista[0] = $temp;
+		};
+		$max = count($lista);
+		for($i = 0;$i < $max; $i++)
+			{
+			$point = $lista[$i];		
+			$newlist[$point->Id] = new stdClass;
+			$newlist[$point->Id]->name = $point->Name;
+			$newlist[$point->Id]->id = $point->Id;
+			$rt90 = new stdClass();
+			$rt90->x = $point->X;
+			$rt90->y = $point->Y;
+			$coord = new stdClass();
+			$coord->rt90 = $rt90;
+			$newlist[$point->Id]->position = $coord;
+			$newlist[$point->Id]->type = $point->Type;	
+			print_r($newlist[$point->Id]);	
+			}
+		file_put_contents($idlist,json_encode($newlist));
 		}
 	}
-$all = json_decode(file_get_contents($idlist));
+
 ?>
